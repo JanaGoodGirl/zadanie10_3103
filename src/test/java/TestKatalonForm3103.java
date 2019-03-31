@@ -1,4 +1,5 @@
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -9,6 +10,9 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.nio.charset.MalformedInputException;
 import java.util.concurrent.TimeUnit;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class TestKatalonForm3103
 {
@@ -24,6 +28,10 @@ public class TestKatalonForm3103
        String submitID = "submit";
        String companyID = "company";
        String commentID = "comment";
+       String firstNameErrorMessageID = "first-name-error";
+       String submitMessageID = "submit-msg";
+       String lastNameErrorMessageID = "last-name-error";
+       String 
 
     @Before
 public void setUp() {
@@ -44,9 +52,22 @@ public void setUp() {
         //znajd element do wpisania imienia
         WebElement nameField = driver.findElement(By.id(nameID));
         //klikni pole, wyczyść i wpisz tekst "Karol"
-        nameField.click();
-        nameField.clear();
-        nameField.sendKeys("Karol");
+        if (nameField.isDisplayed()) {
+            nameField.click();
+            nameField.clear();
+            nameField.sendKeys("Karol");
+            System.out.println("Wpisuję w pole o id:" + nameID + " wartość; Karol");
+        }
+        else {
+            Assert.fail();
+                    }
+
+
+
+
+
+
+
 
     //znajd element do wpisania nazwiska
     WebElement lastNameField = driver.findElement(By.id(lastNameID));
@@ -55,10 +76,14 @@ public void setUp() {
     lastNameField.clear();
     lastNameField.sendKeys("Kowalski");
 
+
+
     //znajd element do zaznaczenia płci
     WebElement genderField = driver.findElement(By.xpath(genderXPath));
     //zaznacz płeć męską
     genderField.click();
+
+
 
     //znajd element do wpisania daty urodzenia
     WebElement dateOfBirthField = driver.findElement(By.id(dateOfBirthID));
@@ -66,6 +91,8 @@ public void setUp() {
     dateOfBirthField.click();
     dateOfBirthField.clear();
     dateOfBirthField.sendKeys("05/22/2010");
+
+
 
     //znajd element do wpisania adresu
     WebElement addressField = driver.findElement(By.id(addressID));
@@ -106,10 +133,37 @@ public void setUp() {
     Select select = new Select(driver.findElement(By.id(roleID)));
     select.selectByVisibleText("QA");
 
+
     //submit
-    WebElement submitField = driver.findElement(By.id(submitID));
+    WebElement submitButton = driver.findElement(By.id(submitID));
     //zatwierdź submit
-    submitField.click();
+    submitButton.click();
+
+    WebElement submitMessage = driver.findElement(By.id(submitMessageID));
+    assertEquals("Successfully submitted!",submitMessage.getText());
+
+
+
+}
+
+@Test
+public void errorHandling(){
+        WebElement submitButton = driver.findElement(By.id(submitMessageID));
+        submitButton.click();
+
+
+
+        WebElement firstNameErrorMessage = driver.findElement(By.id(firstNameErrorMessageID));
+        assertTrue(firstNameErrorMessage.isDisplayed());
+
+
+
+        WebElement lastNameErrorMessage = driver.findElement(By.id(lastNameErrorMessageID));
+        assertTrue(lastNameErrorMessage.isDisplayed());
+
+
+
+
 
 
 }
